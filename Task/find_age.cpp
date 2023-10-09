@@ -1,6 +1,6 @@
 //WAP to find previous and next year age from given age
 #include<stdio.h>
-//
+//global section
 int main()
 {
 	int age,prev,next;	//creat the variable
