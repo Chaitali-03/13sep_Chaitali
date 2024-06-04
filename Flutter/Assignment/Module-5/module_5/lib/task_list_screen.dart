@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'database_helper.dart';
 import 'model.dart';
 import 'task_form_screen.dart';
@@ -21,6 +22,21 @@ class _TaskListScreenState extends State<TaskListScreen> {
 
   _refreshTaskList() async {
     List<Task> x = await dbHelper.getTasks();
+    DateFormat dateFormat = DateFormat('yyyy-MM-dd h:mm a');
+
+    x.sort((a, b) {
+      try {
+        String aFormattedDate = a.date.replaceAll('/', '-');
+        String bFormattedDate = b.date.replaceAll('/', '-');
+        DateTime aDateTime = dateFormat.parse('$aFormattedDate ${a.time}');
+        DateTime bDateTime = dateFormat.parse('$bFormattedDate ${b.time}');
+        return aDateTime.compareTo(bDateTime);
+      } catch (e) {
+        print('Error parsing date/time for task: $e');
+        return 0;
+      }
+    });
+
     setState(() {
       tasks = x;
     });
@@ -57,6 +73,34 @@ class _TaskListScreenState extends State<TaskListScreen> {
     }
   }
 
+  Color _getTaskColor(Task task) {
+    try {
+      String formattedDate = task.date.replaceAll('/', '-');
+      String dateTimeString = '$formattedDate ${task.time}';
+      DateFormat dateFormat = DateFormat('yyyy-MM-dd h:mm a');
+      DateTime taskDateTime = dateFormat.parse(dateTimeString);
+
+      if (task.isCompleted) {
+        return Colors.grey;
+      }
+
+      if (taskDateTime.isBefore(DateTime.now()) && !task.isCompleted) {
+        return Colors.blue;
+      }
+
+      return Colors.white;
+    } catch (e) {
+      print('Error parsing date/time for task: $e');
+      return Colors.red;
+    }
+  }
+
+  void _markTaskAsCompleted(Task task) async {
+    task.isCompleted = true;
+    await dbHelper.updateTask(task);
+    _refreshTaskList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,7 +121,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
         itemBuilder: (context, index) {
           Task task = tasks[index];
           return Card(
-            color: task.isCompleted ? Colors.grey : Colors.white,
+            color: _getTaskColor(task),
             child: ListTile(
               title: Row(
                 children: [
@@ -169,10 +213,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                         TextButton(
                           child: Text('Complete'),
                           onPressed: () {
-                            setState(() {
-                              task.isCompleted = true;
-                            });
-                            dbHelper.updateTask(task);
+                            _markTaskAsCompleted(task);
                             Navigator.of(context).pop();
                           },
                         ),
@@ -234,13 +275,26 @@ class TaskSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    final results = tasks.where((task) => task.name.contains(query)).toList();
+    final results = tasks.where((task) {
+      final taskNameLower = task.name.toLowerCase();
+      final taskDate = task.date;
+      final queryLower = query.toLowerCase();
+
+      return taskNameLower.contains(queryLower) || taskDate.contains(query);
+    }).toList();
+
     return ListView.builder(
       itemCount: results.length,
       itemBuilder: (context, index) {
         return ListTile(
           title: Text(results[index].name),
-          subtitle: Text(results[index].description),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(results[index].description),
+              Text(results[index].date),
+            ],
+          ),
         );
       },
     );
@@ -248,13 +302,26 @@ class TaskSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final suggestions = tasks.where((task) => task.name.contains(query)).toList();
+    final suggestions = tasks.where((task) {
+      final taskNameLower = task.name.toLowerCase();
+      final taskDate = task.date;
+      final queryLower = query.toLowerCase();
+
+      return taskNameLower.contains(queryLower) || taskDate.contains(query);
+    }).toList();
+
     return ListView.builder(
       itemCount: suggestions.length,
       itemBuilder: (context, index) {
         return ListTile(
           title: Text(suggestions[index].name),
-          subtitle: Text(suggestions[index].description),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(suggestions[index].description),
+              Text(suggestions[index].date),
+            ],
+          ),
         );
       },
     );
