@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "346169187558",
+    "project_id": "spherical-elf-416911",
+    "storage_bucket": "spherical-elf-416911.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:346169187558:android:8bf2694806d3f7b883ef27",
+        "android_client_info": {
+          "package_name": "com.example.firebase_crud"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTYwOR3TgrmzakkF5i9q8fIW8iTKwQYaI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:346169187558:android:56f9045fd32a346683ef27",
+        "android_client_info": {
+          "package_name": "com.example.firebasecrud"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTYwOR3TgrmzakkF5i9q8fIW8iTKwQYaI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:346169187558:android:8d7b3f79980157ff83ef27",
+        "android_client_info": {
+          "package_name": "com.example.otp_varify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTYwOR3TgrmzakkF5i9q8fIW8iTKwQYaI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
